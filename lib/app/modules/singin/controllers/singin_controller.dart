@@ -31,8 +31,8 @@ class SinginController extends GetxController {
     final FocusNode textFieldFocus = FocusNode();
 
 
-    final List<String> genderOptions = ["Nam", "Nữ", "Khác"];
-    final RxString selectedGender = "Nam".obs;
+    final List<String> genderOptions = ["Nữ", "Nam", "Khác"];
+    final RxString selectedGender = "Nữ".obs;
 
     UsersModel userInfo = UsersModel();
 

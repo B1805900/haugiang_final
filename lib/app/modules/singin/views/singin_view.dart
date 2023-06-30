@@ -453,21 +453,21 @@ class SinginView extends GetView<SinginController> {
                   )),
             ),
           ),
-          // const SizedBox(height: 10),
-          // InkWell(
-          //   onTap: () => Get.toNamed(Routes.APIDEMO),
-          //   child: TextButton(
-          //     onPressed: () {
-          //       Get.toNamed(Routes.APIDEMO);
-          //     },
-          //     child: const Text('Test API',
-          //         style: TextStyle(
-          //           fontSize: 17,
-          //           fontWeight: FontWeight.w600,
-          //           color: Colors.grey,
-          //         )),
-          //   ),
-          // ),
+          const SizedBox(height: 10),
+          InkWell(
+            onTap: () => Get.toNamed(Routes.APIDEMO),
+            child: TextButton(
+              onPressed: () {
+                Get.toNamed(Routes.APIDEMO);
+              },
+              child: const Text('Test Lib',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey,
+                  )),
+            ),
+          ),
         ],
       ),
       ),
@@ -475,52 +475,57 @@ class SinginView extends GetView<SinginController> {
   }  
 
     Future<void> scanQRCode(BuildContext context) async {
-    String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
-      '#ff6666', // Màu sắc của thanh quét
-      'Hủy', // Văn bản nút hủy
-      false, // Chế độ quét liên tục
-      ScanMode.QR, // Chế độ quét mã QR
-    );
+      try{
+          String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
+            '#ff6666', // Màu sắc của thanh quét
+            'Hủy', // Văn bản nút hủy
+            false, // Chế độ quét liên tục
+            ScanMode.QR, // Chế độ quét mã QR
+          );
 
-    if (barcodeScanResult != '-1') {
-      // Xử lý dữ liệu mã QR đã quét thành công
-    //  controller.showDialogMessagenew(barcodeScanResult);
-      List<String> values = barcodeScanResult.split("|");
+          if (barcodeScanResult != '-1') {
+            // Xử lý dữ liệu mã QR đã quét thành công
+          //  controller.showDialogMessagenew(barcodeScanResult);
+            List<String> values = barcodeScanResult.split("|");
 
-      String cccd = values[0];
-      String cmnd = values[1];
-      String fullName = values[2];
-      String birthDate = values[3];
-      String gender = values[4];
-      String address = values[5];
-      String expiryDate = values[6];
+            String cccd = values[0];
+            String cmnd = values[1];
+            String fullName = values[2];
+            String birthDate = values[3];
+            String gender = values[4];
+            String address = values[5];
+            String expiryDate = values[6];
 
-      int birthDay = int.parse(birthDate.substring(0, 2)); // Lấy 2 ký tự đầu tiên
-      int birthMonth = int.parse(birthDate.substring(2, 4)); // Lấy 2 ký tự tiếp theo
-      int birthYear = int.parse(birthDate.substring(4, 8)); // Lấy 4 ký tự cuối cùng
+            int birthDay = int.parse(birthDate.substring(0, 2)); // Lấy 2 ký tự đầu tiên
+            int birthMonth = int.parse(birthDate.substring(2, 4)); // Lấy 2 ký tự tiếp theo
+            int birthYear = int.parse(birthDate.substring(4, 8)); // Lấy 4 ký tự cuối cùng
 
-      // Lấy ngày tháng năm hiện tại
-      DateTime currentDate = DateTime.now();
-      int currentDay = currentDate.day;
-      int currentMonth = currentDate.month;
-      int currentYear = currentDate.year;
+            // Lấy ngày tháng năm hiện tại
+            DateTime currentDate = DateTime.now();
+            int currentDay = currentDate.day;
+            int currentMonth = currentDate.month;
+            int currentYear = currentDate.year;
 
-      // Tính tuổi
-      int age = currentYear - birthYear;
-      if (currentMonth < birthMonth || (currentMonth == birthMonth && currentDay < birthDay)) {
-        age--;
+            // Tính tuổi
+            int age = currentYear - birthYear;
+            if (currentMonth < birthMonth || (currentMonth == birthMonth && currentDay < birthDay)) {
+              age--;
+            }
+
+            controller.fullnameController.text = fullName;
+            controller.adressController.text = address;
+            controller.cccdController.text = cccd;
+            //controller.selectedGender.value = gender;
+            controller.ageController.text = "${age}";
+            controller.update;
+            //controller.showDialogMessagenew("${age}");
+
+          } else {
+            // Người dùng đã hủy quét mã QR
+            // controller.showDialogMessagenew("Scan Erorr");
+          }
+      }catch(e){
+        controller.showDialogMessagenew("QR không hợp lệ!");
       }
-
-      controller.fullnameController.text = fullName;
-      controller.adressController.text = address;
-      controller.cccdController.text = cccd;
-      controller.ageController.text = "${age}";
-      controller.update;
-      //controller.showDialogMessagenew("${age}");
-
-    } else {
-      // Người dùng đã hủy quét mã QR
-      // controller.showDialogMessagenew("Scan Erorr");
-    }
   }
 }
