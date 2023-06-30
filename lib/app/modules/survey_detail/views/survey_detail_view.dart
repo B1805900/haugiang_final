@@ -12,9 +12,8 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(controller.nameSurveytitle),
-        backgroundColor: primaryColor,
-        centerTitle: true,
+        backgroundColor: primaryColor, // Màu nền của AppBar
+        title: Obx(() => Text('Nhóm câu hỏi: ${controller.currentPage.value + 1}/${controller.maxPage.value}')),
       ),
       body: Container(
         color: Colors.white,
@@ -52,7 +51,35 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                       CircularProgressIndicator(), // Hiển thị vòng xoay tròn ở giữa màn hình
                 );
               } else {
-                return InkWell(
+                if((controller.currentPage.value +1) != controller.maxPage.value){
+                  return InkWell(
+                  onTap: () {
+                    controller.pageController.jumpToPage(controller.currentPage.value+1);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Center(
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: primaryColor,
+                        ),
+                        child: const Text(
+                          "Tiếp tục",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+                }else{
+                  return InkWell(
                   onTap: () {
                     if(controller.resultList.isNotEmpty){
                       controller.saveResult(controller.resultList);
@@ -71,7 +98,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                           color: primaryColor,
                         ),
                         child: const Text(
-                          'Lưu kết quả',
+                          "Lưu kết quả",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -82,6 +109,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                     ),
                   ),
                 );
+                }
               }
             }),
             const SizedBox(height: 3),
@@ -99,6 +127,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
   controller.sttPadding.clear();
   final List<SurveydetailModel>? surVeydetail = await controller.fetchData();
   if (surVeydetail != null) {
+    controller.updateCurrentPage(0,  surVeydetail.length, "");
   for (int i=0; i<surVeydetail.length; i++) {
     final SurveydetailModel survey = surVeydetail[i];
     for(int j=0; j<survey.questions!.length; j++){
@@ -122,49 +151,47 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
   return Stack(children: [
     PageView.builder(
       controller: controller.pageController,
-      onPageChanged: (index) {
-      },
+      onPageChanged: (page) => controller.updateCurrentPage(page,surVeydetail.length,"a"),
       itemCount: surVeydetail.length,
       itemBuilder: (context, groupIndex) {
         final SurveydetailModel survey = surVeydetail[groupIndex];
-        double screenWidth = MediaQuery.of(context).size.width;
-        double itemWidth = screenWidth / (surVeydetail.length + 1);
-        controller.currentPage.value = groupIndex;
+        // double screenWidth = MediaQuery.of(context).size.width;
+        // double itemWidth = screenWidth / (surVeydetail.length + 1);
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(
               height: 10,
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(
-                  surVeydetail.length,
-                  (index) => GestureDetector(
-                    onTap: () {
-                      // Di chuyển đến page tương ứng khi người dùng nhấp vào
-                      controller.pageController.animateToPage(
-                        index,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                    child: Container(
-                      width: itemWidth, // Định nghĩa chiều rộng của thanh ngang
-                      height: 10, // Định nghĩa chiều cao của thanh ngang
-                      margin: const EdgeInsets.symmetric(horizontal: 5), // Khoảng cách giữa các thanh ngang
-                      color: groupIndex == index ? primaryColor : Colors.grey, // Màu sắc tùy thuộc vào trạng thái của page
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.horizontal,
+            //   child: Row(
+            //     children: List.generate(
+            //       surVeydetail.length,
+            //       (index) => GestureDetector(
+            //         onTap: () {
+            //           // Di chuyển đến page tương ứng khi người dùng nhấp vào
+            //           controller.pageController.animateToPage(
+            //             index,
+            //             duration: const Duration(milliseconds: 300),
+            //             curve: Curves.easeInOut,
+            //           );
+            //         },
+            //         child: Container(
+            //           width: itemWidth, // Định nghĩa chiều rộng của thanh ngang
+            //           height: 10, // Định nghĩa chiều cao của thanh ngang
+            //           margin: const EdgeInsets.symmetric(horizontal: 5), // Khoảng cách giữa các thanh ngang
+            //           color: groupIndex == index ? primaryColor : Colors.grey, // Màu sắc tùy thuộc vào trạng thái của page
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            //const SizedBox(height: 5),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               child: Text(
-                "Nhóm câu hỏi: ${survey.groupName}",
+                "${survey.groupName}",
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -172,6 +199,11 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                 ),
               ),
             ),
+            // Container(
+            //   height: 2,
+            //   color: Colors.blue,
+            //   margin: const EdgeInsets.symmetric(vertical: 5),
+            // ),
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
@@ -181,9 +213,9 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                   controller.answerCounts[question.idQuestion] = 0;
                   String manyChose;
                   if (question.type == 1){
-                    manyChose = "Chọn một đáp án";
+                    manyChose = "Chọn một đáp án!";
                   }else{
-                    manyChose = "Chọn nhiều đáp án";
+                    manyChose = "Chọn nhiều đáp án!";
                   }
                   return AutoScrollTag(
                   controller: _scrollController,
@@ -193,6 +225,14 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                       key: ValueKey(question.idQuestion),
                       padding: const EdgeInsets.only(left: 10, right: 10),
                       child: InkWell(
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(manyChose),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        },
                         child: Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Container(
@@ -211,7 +251,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                                     SizedBox(
                                       width: Get.width * 0.7,
                                       child: Text(
-                                        "Câu hỏi ${questionIndex + 1}: ${manyChose}",
+                                        "Câu ${questionIndex + 1}/${survey.questions!.length}: ${question.question}",
                                         maxLines: 10,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
@@ -224,24 +264,24 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                                     ),
                                   ],
                                 ),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: Get.width * 0.85,
-                                      child: Text(
-                                        "${question.question}",
-                                        maxLines: 10,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          color: texColor,
-                                          fontWeight: FontWeight.bold,
-                                          height: 1.5,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                // Row(
+                                //   children: [
+                                //     SizedBox(
+                                //       width: Get.width * 0.85,
+                                //       child: Text(
+                                //         "${question.question}",
+                                //         maxLines: 10,
+                                //         overflow: TextOverflow.ellipsis,
+                                //         style: const TextStyle(
+                                //           fontSize: 18,
+                                //           color: texColor,
+                                //           fontWeight: FontWeight.bold,
+                                //           height: 1.5,
+                                //         ),
+                                //       ),
+                                //     ),
+                                //   ],
+                                // ),
                                 Container(
                                   height: 2,
                                   color: primaryColor,
@@ -260,13 +300,22 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                                           final AnswerModel answer = question.answers![index];
                                           return InkWell(
                                             onTap: () {
-                                              if (question.type == 1){
-                                                for (int i=0; i < question.answers!.length; i++){
+                                              if (question.type == 1){ //trường hợp chọn 1 đáp án
+                                                if(answer.isCheck == true){
+                                                  answer.isCheck =  !(answer.isCheck ?? false);
+                                                  AnswerModel answerChild = question.answers![index];
+                                                  answerChild.isCheck = !(answerChild.isCheck ?? false);
+                                                  controller.answerCounts[question.idQuestion] = controller.answerCounts[question.idQuestion]! - 1;
+                                                  controller.resultList.removeWhere((result) => result.idQuestion ==  question.idQuestion && result.answer == answer.answer);
+                                                  controller.update();
+                                                }else{
+                                                  for (int i=0; i < question.answers!.length; i++){
                                                     AnswerModel answerChild = question.answers![i];
                                                     answerChild.isCheck = false;
                                                     controller.resultList.removeWhere((result) => result.idQuestion ==  question.idQuestion && result.answer == answerChild.answer);
                                                   }
                                                   controller.update();
+                                                }
                                                 if(controller.answerCounts[question.idQuestion]! < 1){
                                                   answer.isCheck =  !(answer.isCheck ?? false);
                                                   if(answer.isCheck == true){
@@ -277,9 +326,6 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                                                       question.idQuestion,
                                                       answer.answer,
                                                     );
-                                                  }else{
-                                                    controller.answerCounts[question.idQuestion] = controller.answerCounts[question.idQuestion]! - 1;
-                                                    controller.resultList.removeWhere((result) => result.idQuestion ==  question.idQuestion && result.answer == answer.answer);
                                                   }
                                                 }else{
                                                   answer.isCheck =  !(answer.isCheck ?? false);

@@ -14,8 +14,16 @@ class SurveyDetailController extends GetxController {
   Map<String, int> answerCounts = {};
   Map<Key, int> listKeyofpage = {};
   Map<Key, int> sttPadding = {};
-  RxInt currentPage = 0.obs;
   PageController pageController = PageController();
+    var currentPage = 0.obs;
+    var maxPage = 0.obs;
+    var groupName = "".obs;
+
+  void updateCurrentPage(int page, int numberpage, String name) {
+    currentPage.value = page;
+    maxPage.value = numberpage;
+    groupName.value = name;
+  }
   //TODO: Implement SurveyDetailController
   final List<ResultModel> resultList = <ResultModel>[];
   void addResult(
