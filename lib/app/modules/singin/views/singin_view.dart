@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:get/get.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/singin_controller.dart';
@@ -61,8 +62,9 @@ class SinginView extends GetView<SinginController> {
                       color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
                     ),
                   keyboardType: TextInputType.text,
+                  controller: controller.fullnameController,
                   decoration: buildDecorationTextFormField(
-                      hintText: 'Họ tên...', icon: Icons.drive_file_rename_outline),
+                  hintText: 'Họ tên...', icon: Icons.drive_file_rename_outline),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Họ tên không được rỗng";
@@ -81,6 +83,7 @@ class SinginView extends GetView<SinginController> {
                       color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
                     ),
                   keyboardType: TextInputType.number,
+                  controller: controller.cccdController,
                   decoration: buildDecorationTextFormField(
                       hintText: 'Số CCCD...', icon: Icons.recent_actors),
                   validator: (value) {
@@ -122,7 +125,7 @@ class SinginView extends GetView<SinginController> {
                     ),
                   keyboardType: TextInputType.emailAddress,
                   decoration: buildDecorationTextFormField(
-                      hintText: 'Email...', icon: Icons.person),
+                      hintText: 'Email...', icon: Icons.email),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return null;
@@ -141,6 +144,7 @@ class SinginView extends GetView<SinginController> {
                       color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
                     ),
                   keyboardType: TextInputType.text,
+                  controller: controller.adressController,
                   decoration: buildDecorationTextFormField(
                       hintText: 'Địa chỉ...', icon: Icons.location_city),
                   validator: (value) {
@@ -235,6 +239,26 @@ class SinginView extends GetView<SinginController> {
                     controller.userInfo.income = int.tryParse(value ?? '');
                   },
                 ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  style: const TextStyle(
+                      color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
+                    ),
+                  keyboardType: TextInputType.text,
+                  decoration: buildDecorationTextFormField(
+                  hintText: 'Dịch vụ công từng sử dụng...', icon: Icons.accessibility_sharp),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return null;
+                    } else if (value.length <= 1) {
+                      return "Vui lòng nhập dịch vụ hợp lệ";
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    controller.userInfo.usedservice = value;
+                  },
+                ),
                 const SizedBox(height: 15),
                 Row(
                   children: [
@@ -280,8 +304,9 @@ class SinginView extends GetView<SinginController> {
                       color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
                     ),
                           keyboardType: TextInputType.number,
+                          controller: controller.ageController,
                           decoration: buildDecorationTextFormField(
-                          hintText: '.'),
+                          hintText: ''),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return null;
@@ -314,7 +339,7 @@ class SinginView extends GetView<SinginController> {
                     ),
                           keyboardType: TextInputType.number,
                           decoration: buildDecorationTextFormField(
-                          hintText: '.'),
+                          hintText: ''),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return null;
@@ -341,22 +366,22 @@ class SinginView extends GetView<SinginController> {
                           style: const TextStyle(
                       color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
                     ),
-                          keyboardType: TextInputType.number,
-                          decoration: buildDecorationTextFormField(
-                          hintText: '.'),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return null;
-                            } else if (!GetUtils.isNum(value)) {
-                              return "Vui lòng nhập số thành viên nữ hợp lệ";
-                            }
+                        keyboardType: TextInputType.number,
+                        decoration: buildDecorationTextFormField(
+                        hintText: ''),
+                        validator: (value) {
+                          if (value!.isEmpty) {
                             return null;
-                          },
-                          onSaved: (value) {
-                            controller.userInfo.numfemale = int.tryParse(value ?? '');
-                          },
-                        ),
+                          } else if (!GetUtils.isNum(value)) {
+                            return "Vui lòng nhập số thành viên nữ hợp lệ";
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          controller.userInfo.numfemale = int.tryParse(value ?? '');
+                        },
                       ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),  
@@ -371,8 +396,22 @@ class SinginView extends GetView<SinginController> {
                           if (controller.formKey.currentState!.validate()) {
                             controller.formKey.currentState!.save(); // Gọi hàm onSaved của TextFormField
                             controller.userInfo.gender = controller.selectedGender.value;
-                            controller.userInfo.usedservice = "Hành chính công";
                             controller.formKey.currentState!.reset();
+                            
+                            controller.fullnameController.clear();
+                            controller.cccdController.clear();
+                            controller.phoneController.clear();
+                            controller.emailController.clear();
+                            controller.adressController.clear();
+                            controller.ageController.clear();
+                            controller.genderController.clear();
+                            controller.nationController.clear();
+                            controller.educationController.clear();
+                            controller.numpeopleController.clear();
+                            controller.numfemaleController.clear();
+                            controller.jobController.clear();
+                            controller.incomeController.clear();
+
                             controller.saveUser1(controller.userInfo);
                           }
                         },
@@ -399,21 +438,21 @@ class SinginView extends GetView<SinginController> {
               ],
             ),
           ),
-          // const SizedBox(height: 10),
-          // InkWell(
-          //   onTap: () => Get.toNamed(Routes.QRSCANER),
-          //   child: TextButton(
-          //     onPressed: () {
-          //       Get.toNamed(Routes.QRSCANER);
-          //     },
-          //     child: const Text('Tiếp tục bằng QR CCCD',
-          //         style: TextStyle(
-          //           fontSize: 17,
-          //           fontWeight: FontWeight.w600,
-          //           color: Colors.grey,
-          //         )),
-          //   ),
-          // ),
+          const SizedBox(height: 5),
+          InkWell(
+            onTap: () => Get.toNamed(Routes.QRSCANER),
+            child: TextButton(
+              onPressed: () {
+                scanQRCode(context);
+              },
+              child: const Text('Tiếp tục bằng QR CCCD',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Color.fromARGB(255, 115, 92, 92),
+                  )),
+            ),
+          ),
           // const SizedBox(height: 10),
           // InkWell(
           //   onTap: () => Get.toNamed(Routes.APIDEMO),
@@ -434,4 +473,54 @@ class SinginView extends GetView<SinginController> {
       ),
     );
   }  
+
+    Future<void> scanQRCode(BuildContext context) async {
+    String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666', // Màu sắc của thanh quét
+      'Hủy', // Văn bản nút hủy
+      false, // Chế độ quét liên tục
+      ScanMode.QR, // Chế độ quét mã QR
+    );
+
+    if (barcodeScanResult != '-1') {
+      // Xử lý dữ liệu mã QR đã quét thành công
+    //  controller.showDialogMessagenew(barcodeScanResult);
+      List<String> values = barcodeScanResult.split("|");
+
+      String cccd = values[0];
+      String cmnd = values[1];
+      String fullName = values[2];
+      String birthDate = values[3];
+      String gender = values[4];
+      String address = values[5];
+      String expiryDate = values[6];
+
+      int birthDay = int.parse(birthDate.substring(0, 2)); // Lấy 2 ký tự đầu tiên
+      int birthMonth = int.parse(birthDate.substring(2, 4)); // Lấy 2 ký tự tiếp theo
+      int birthYear = int.parse(birthDate.substring(4, 8)); // Lấy 4 ký tự cuối cùng
+
+      // Lấy ngày tháng năm hiện tại
+      DateTime currentDate = DateTime.now();
+      int currentDay = currentDate.day;
+      int currentMonth = currentDate.month;
+      int currentYear = currentDate.year;
+
+      // Tính tuổi
+      int age = currentYear - birthYear;
+      if (currentMonth < birthMonth || (currentMonth == birthMonth && currentDay < birthDay)) {
+        age--;
+      }
+
+      controller.fullnameController.text = fullName;
+      controller.adressController.text = address;
+      controller.cccdController.text = cccd;
+      controller.ageController.text = "${age}";
+      controller.update;
+      //controller.showDialogMessagenew("${age}");
+
+    } else {
+      // Người dùng đã hủy quét mã QR
+      // controller.showDialogMessagenew("Scan Erorr");
+    }
+  }
 }
