@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -9,6 +10,8 @@ import '../modules/singin/bindings/singin_binding.dart';
 import '../modules/singin/views/singin_view.dart';
 import '../modules/survey_detail/bindings/survey_detail_binding.dart';
 import '../modules/survey_detail/views/survey_detail_view.dart';
+import '../modules/testqr/bindings/testqr_binding.dart';
+import '../modules/testqr/views/testqr_view.dart';
 
 part 'app_routes.dart';
 
@@ -42,6 +45,11 @@ class AppPages {
       name: _Paths.SURVEY_DETAIL,
       page: () => const SurveyDetailView(),
       binding: SurveyDetailBinding(),
+    ),
+    GetPage(
+      name: _Paths.TESTQR,
+      page: () => const TestqrView(),
+      binding: TestqrBinding(),
     ),
   ];
 }

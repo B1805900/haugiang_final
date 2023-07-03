@@ -8,8 +8,8 @@ abstract class Routes {
   static const SINGIN = _Paths.SINGIN;
   static const QRSCANER = _Paths.QRSCANER;
   static const SURVEY_DETAIL = _Paths.SURVEY_DETAIL;
-  static const APIDEMO = _Paths.APIDEMO;
   static const SURVEY_DETAIL_PAGE = _Paths.SURVEY_DETAIL_PAGE;
+  static const TESTQR = _Paths.TESTQR;
 }
 
 abstract class _Paths {
@@ -19,6 +19,6 @@ abstract class _Paths {
   static const SINGIN = '/singin';
   static const QRSCANER = '/qrscaner';
   static const SURVEY_DETAIL = '/survey-detail';
-  static const APIDEMO = '/apidemo';
   static const SURVEY_DETAIL_PAGE = '/survey-detail-page';
+  static const TESTQR = '/testqr';
 }

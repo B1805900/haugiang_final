@@ -455,10 +455,10 @@ class SinginView extends GetView<SinginController> {
           ),
           const SizedBox(height: 10),
           InkWell(
-            onTap: () => Get.toNamed(Routes.APIDEMO),
+            onTap: () => Get.toNamed(Routes.TESTQR),
             child: TextButton(
               onPressed: () {
-                Get.toNamed(Routes.APIDEMO);
+                Get.toNamed(Routes.TESTQR);
               },
               child: const Text('Test Lib',
                   style: TextStyle(
@@ -479,7 +479,7 @@ class SinginView extends GetView<SinginController> {
           String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
             '#ff6666', // Màu sắc của thanh quét
             'Hủy', // Văn bản nút hủy
-            false, // Chế độ quét liên tục
+            true, // Chế độ quét liên tục
             ScanMode.QR, // Chế độ quét mã QR
           );
 
