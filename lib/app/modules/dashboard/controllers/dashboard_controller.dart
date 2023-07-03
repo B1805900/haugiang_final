@@ -10,8 +10,8 @@ class DashboardController extends GetxController {
   Future<List<SurveyModel>> fetchData() async {
     var propertyList = <Map<String, dynamic>>[].obs;
     List<SurveyModel> surveyList = [];
-    var url = Uri.parse('http://139.180.145.98:8080/survey.php');
     try {
+      var url = Uri.parse('http://139.180.145.98:8080/survey.php');
       var response = await http.get(url);
       if (response.statusCode == 200) {
         var jsonString = response.body;
@@ -35,8 +35,6 @@ class DashboardController extends GetxController {
     } catch (e) {
       print('Lỗi khi gọi API: $e');
     }
-
-      // Trả về null hoặc giá trị khác để biểu thị lỗi
     return surveyList;
   }
 
