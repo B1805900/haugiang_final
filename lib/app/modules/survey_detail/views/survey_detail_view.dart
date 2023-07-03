@@ -479,8 +479,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
     ),
   ]);
   } else {
-    // Trả về một widget để biểu thị khi không có dữ liệu hoặc xảy ra lỗi
-    return const Text('No data available');
+    return const Text('Hiện chưa có câu hỏi');
     }
   }
 

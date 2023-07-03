@@ -42,16 +42,15 @@ class SurveyDetailController extends GetxController {
   Future<void> saveResult(List<ResultModel> resultList) async {
     isLoading.value = true;
 
-    // Thực hiện công việc lưu người dùng
+    // Thực hiện công việc lưu kết quả
     await sendDataToAPI(resultList);
 
     isLoading.value = false;
   }
 
   Future<List<SurveydetailModel>?> fetchData() async {
-    var url = Uri.parse(
-        'http://139.180.145.98:8080/surveydetail.php?id_survey=${idSurveyNum}&&idUser=${cccdNum}');
     try {
+      var url = Uri.parse('http://139.180.145.98:8080/surveydetail.php?id_survey=${idSurveyNum}&&idUser=${cccdNum}');
       var response = await http.get(url);
       if (response.statusCode == 200) {
         var jsonString = response.body;
@@ -69,18 +68,28 @@ class SurveyDetailController extends GetxController {
         }
         return fetchedSurveyList;
       } else {
-        print('Lỗi khi gọi API: ${response.statusCode}');
+        Get.snackbar(
+          "Lưu API", "Vui lòng liên hệ Quản trị viên",
+          shouldIconPulse: true,
+          animationDuration: const Duration(seconds: 7),
+          colorText: Colors.red,
+          backgroundColor: Colors.yellow);
       }
     } catch (e) {
-      print('Lỗi khi gọi API: $e');
+      Get.snackbar(
+          "Lỗi kết nối!", e.toString(),
+          shouldIconPulse: true,
+          animationDuration: const Duration(seconds: 7),
+          colorText: Colors.red,
+          backgroundColor: Colors.yellow);
     }
-
     // Trả về null hoặc giá trị khác để biểu thị lỗi
     return null;
   }
 
   Future<void> sendDataToAPI(List<ResultModel> resultList) async {
-    // Tạo danh sách các đối tượng ResultModel thành danh sách Map
+    try {
+          // Tạo danh sách các đối tượng ResultModel thành danh sách Map
     List<Map<String, dynamic>> resultsData =
         resultList.map((result) => result.toJson()).toList();
 
@@ -101,7 +110,6 @@ class SurveyDetailController extends GetxController {
         var responseData = jsonDecode(response.body);
         var status = responseData[0]['status'];
         if (status == 'success') {
-          print(responseData);
           // Xử lý thành công
           // print('Luu CSLD Thành công');
           // Get.snackbar(
@@ -131,11 +139,22 @@ class SurveyDetailController extends GetxController {
         }
       } else {
         // Xử lý lỗi: phản hồi rỗng
-        print('Empty response');
+        Get.snackbar(
+          "Lỗi API!", "Vui lòng liên hệ Quản trị viên hoặc thử lại sau",
+          shouldIconPulse: true,
+          animationDuration: const Duration(seconds: 7),
+          colorText: Colors.red,
+          backgroundColor: Colors.yellow);
       }
     } else {
       // Xử lý lỗi: mã trạng thái không phải 200
-      showDialogMessage('Không thể lưu kết quả do Lỗi kết nối!');
+      //showDialogMessage('Không thể lưu kết quả do Lỗi kết nối!');
+      Get.snackbar(
+          "Lỗi kết nối!", "Vui lòng kiểm tra lại kết nối hoặc thử lại sau",
+          shouldIconPulse: true,
+          animationDuration: const Duration(seconds: 7),
+          colorText: Colors.red,
+          backgroundColor: Colors.yellow);
     }
 
     // // Kiểm tra response từ server
@@ -165,6 +184,14 @@ class SurveyDetailController extends GetxController {
     //       duration: Duration(seconds: 2),
     //     );
     // }
+    } catch (e) {
+      Get.snackbar(
+          "Lỗi kết nối!", "Vui lòng nhập lại kết nối mạng",
+          shouldIconPulse: true,
+          animationDuration: const Duration(seconds: 7),
+          colorText: Colors.red,
+          backgroundColor: Colors.yellow);
+    }
   }
 
   @override

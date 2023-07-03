@@ -30,10 +30,22 @@ class DashboardController extends GetxController {
         }
         propertyList.value = properties;
       } else {
-        print('Lỗi khi gọi API: ${response.statusCode}');
+        //print('Lỗi khi gọi API: ${response.statusCode}');
+        Get.snackbar(
+          "Lỗi khi gọi API!", "Vui lòng liên hệ Quản trị viên",
+          shouldIconPulse: true,
+          animationDuration: const Duration(seconds: 7),
+          colorText: Colors.red,
+          backgroundColor: Colors.yellow);
       }
     } catch (e) {
-      print('Lỗi khi gọi API: $e');
+    //  print('Lỗi khi gọi API: $e');
+      Get.snackbar(
+          "Kết nối không thành công!", "Vui lòng kiểm tra lại kết nối",
+          shouldIconPulse: true,
+          animationDuration: const Duration(seconds: 7),
+          colorText: Colors.red,
+          backgroundColor: Colors.yellow);
     }
     return surveyList;
   }

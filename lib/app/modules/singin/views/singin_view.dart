@@ -53,7 +53,7 @@ class SinginView extends GetView<SinginController> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(46, 30, 46, 0),
+            padding: const EdgeInsets.fromLTRB(46, 15, 46, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -68,7 +68,7 @@ class SinginView extends GetView<SinginController> {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return "Họ tên không được rỗng";
-                    } else if (GetUtils.isNum(value)) {
+                    } else if (GetUtils.isNum(value) || value.replaceAll(' ', '').length <= 2) {
                       return "Vui lòng nhập họ tên hợp lệ";
                     }
                     return null;
@@ -89,7 +89,7 @@ class SinginView extends GetView<SinginController> {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return null;
-                    } else if (value.length != 12 && value.length != 9) {
+                    } else if (value.replaceAll(' ', '').length != 12 && value.replaceAll(' ', '').length != 9 || !GetUtils.isNum(value)) {
                       return 'Số CMND/CCCD chưa hợp lệ (phải có 9 hoặc 12 số)';
                     }
                     return null;
@@ -108,8 +108,9 @@ class SinginView extends GetView<SinginController> {
                       hintText: 'Số điện thoại...', icon: Icons.phone_android),
                   validator: (value) {
                     if (value!.isEmpty) {
+                    //  return "Số điện thoại không được rỗng";
                       return null;
-                    } else if (!GetUtils.isNum(value)) {
+                    } else if (!GetUtils.isNum(value.replaceAll(' ', ''))) {
                       return "Vui lòng nhập số điện thoại hợp lệ";
                     }
                     return null;
@@ -149,8 +150,8 @@ class SinginView extends GetView<SinginController> {
                       hintText: 'Địa chỉ...', icon: Icons.location_city),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return null;
-                    } else if (value.length < 6) {
+                    //  return "Địa chỉ không được rỗng";
+                    } else if (value.replaceAll(' ', '').length < 5) {
                       return 'Vui lòng nhập địa chỉ hợp lệ';
                     }
                     return null;
@@ -169,8 +170,9 @@ class SinginView extends GetView<SinginController> {
                   hintText: 'Học vấn...', icon: Icons.school),
                   validator: (value) {
                     if (value!.isEmpty) {
+                    //  return "Học vấn không được rỗng";
                       return null;
-                    } else if (value.length < 2) {
+                    } else if (value.replaceAll(' ', '').length < 2) {
                       return "Vui lòng nhập học vấn hợp lệ";
                     }
                     return null;
@@ -190,7 +192,7 @@ class SinginView extends GetView<SinginController> {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return null;
-                    } else if (value.length < 3) {
+                    } else if (value.replaceAll(' ', '').length < 2) {
                       return "Vui lòng nhập tên dân tộc hợp lệ";
                     }
                     return null;
@@ -209,8 +211,9 @@ class SinginView extends GetView<SinginController> {
                   hintText: 'Nghề nghiệp...', icon: Icons.work),
                   validator: (value) {
                     if (value!.isEmpty) {
+                    //  return "Nghề nghiệp không được rỗng";
                       return null;
-                    } else if (value.length < 2) {
+                    } else if (value.replaceAll(' ', '').length < 2) {
                       return "Vui lòng nhập nghề nghiệp hợp lệ";
                     }
                     return null;
@@ -250,7 +253,7 @@ class SinginView extends GetView<SinginController> {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return null;
-                    } else if (value.length <= 1) {
+                    } else if (value.replaceAll(' ', '').length <= 1) {
                       return "Vui lòng nhập dịch vụ hợp lệ";
                     }
                     return null;
@@ -299,27 +302,27 @@ class SinginView extends GetView<SinginController> {
                               )),
                     const SizedBox(width: 10),
                     Flexible(
-                        child: TextFormField(
-                          style: const TextStyle(
-                      color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
-                    ),
-                          keyboardType: TextInputType.number,
-                          controller: controller.ageController,
-                          decoration: buildDecorationTextFormField(
-                          hintText: ''),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return null;
-                            } else if (!GetUtils.isNum(value)) {
-                              return "Vui lòng nhập số tuổi hợp lệ";
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            controller.userInfo.age = int.tryParse(value ?? '');
-                          },
+                      child: TextFormField(
+                        textAlign: TextAlign.center, // Căn giữa nội dung ngay khi nhập liệu
+                        keyboardType: TextInputType.number,
+                        controller: controller.ageController,
+                        decoration: buildDecorationTextFormField2(hintText: ''),
+                        style: const TextStyle(
+                          color: texColor,
                         ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return null;
+                          } else if (!GetUtils.isNum(value) || value.length > 3) {
+                            return "Không hợp lệ";
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          controller.userInfo.age = int.tryParse(value ?? '');
+                        },
                       ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -335,16 +338,17 @@ class SinginView extends GetView<SinginController> {
                     Flexible(
                         child: TextFormField(
                           style: const TextStyle(
-                      color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
-                    ),
+                            color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
+                          ),
+                          textAlign: TextAlign.center, // Căn giữa nội dung ngay khi nhập liệu
                           keyboardType: TextInputType.number,
-                          decoration: buildDecorationTextFormField(
+                          decoration: buildDecorationTextFormField2(
                           hintText: ''),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return null;
-                            } else if (!GetUtils.isNum(value)) {
-                              return "Vui lòng nhập số nhân khẩu hợp lệ";
+                            } else if (!GetUtils.isNum(value) || value.length > 4) {
+                              return "Không hợp lệ";
                             }
                             return null;
                           },
@@ -364,16 +368,17 @@ class SinginView extends GetView<SinginController> {
                     Flexible(
                         child: TextFormField(
                           style: const TextStyle(
-                      color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
-                    ),
+                          color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
+                        ),
+                        textAlign: TextAlign.center, // Căn giữa nội dung ngay khi nhập liệu
                         keyboardType: TextInputType.number,
-                        decoration: buildDecorationTextFormField(
+                        decoration: buildDecorationTextFormField2(
                         hintText: ''),
                         validator: (value) {
                           if (value!.isEmpty) {
                             return null;
-                          } else if (!GetUtils.isNum(value)) {
-                            return "Vui lòng nhập số thành viên nữ hợp lệ";
+                          } else if (!GetUtils.isNum(value) || value.length > 4) {
+                            return "Không hợp lệ";
                           }
                           return null;
                         },
@@ -453,21 +458,21 @@ class SinginView extends GetView<SinginController> {
                   )),
             ),
           ),
-          const SizedBox(height: 10),
-          InkWell(
-            onTap: () => Get.toNamed(Routes.TESTQR),
-            child: TextButton(
-              onPressed: () {
-                Get.toNamed(Routes.TESTQR);
-              },
-              child: const Text('Test Lib',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey,
-                  )),
-            ),
-          ),
+          // const SizedBox(height: 10),
+          // InkWell(
+          //   onTap: () => Get.toNamed(Routes.TESTQR),
+          //   child: TextButton(
+          //     onPressed: () {
+          //       Get.toNamed(Routes.TESTQR);
+          //     },
+          //     child: const Text('Test Lib',
+          //         style: TextStyle(
+          //           fontSize: 17,
+          //           fontWeight: FontWeight.w600,
+          //           color: Colors.grey,
+          //         )),
+          //   ),
+          // ),
         ],
       ),
       ),
@@ -515,6 +520,7 @@ class SinginView extends GetView<SinginController> {
             controller.fullnameController.text = fullName;
             controller.adressController.text = address;
             controller.cccdController.text = cccd;
+            controller.selectedGender.value = gender;
             //controller.selectedGender.value = gender;
             controller.ageController.text = "${age}";
             controller.update;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:get/get.dart';
 
@@ -53,11 +52,8 @@ class DashboardView extends GetView<DashboardController> {
   Future<Widget> buildSurveyList(BuildContext context) async {
   List<SurveyModel> surveyList = await controller.fetchData();
   if (surveyList.isEmpty) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24),
-      // ignore: use_build_context_synchronously
-      child: buildNullList(context),
-    );
+    // ignore: use_build_context_synchronously
+    return buildNullList(context);
   } else {
     return Padding(
       padding: const EdgeInsets.only(left: 5, right: 5),
@@ -70,7 +66,9 @@ class DashboardView extends GetView<DashboardController> {
         //   ),
         // ),
         child: RefreshIndicator(
-          onRefresh: () { return Future.delayed(const Duration(seconds: 1)); },
+          onRefresh: () async {
+            surveyList = await controller.fetchData();
+          },
           child: ListView(
             children: surveyList.map((survey) {
               return InkWell(
@@ -184,26 +182,44 @@ class DashboardView extends GetView<DashboardController> {
   }
 
   Widget buildNullList(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 235, 107, 104),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            child: Image(
-              image: AssetImage('assets/images/logo.png'),
-            ),
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(), // Cho phép thao tác kéo
+      child: RefreshIndicator(
+        onRefresh: () async {
+          // Thực hiện các tác vụ cần thiết để reload lại module ở đây
+          Get.snackbar(
+            "Lưu dữ liệu không thành công!",
+            "Vui lòng nhập lại thông tin hợp lệ",
+            shouldIconPulse: true,
+            animationDuration: const Duration(seconds: 7),
+            colorText: Colors.red,
+            backgroundColor: Colors.yellow,
+          );
+        },
+        child: Container(
+          margin: const EdgeInsets.only(top: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 235, 107, 104),
+            borderRadius: BorderRadius.circular(10),
           ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
-            child: const Text('Hiện chưa có khảo sát!',
-                style: TextStyle(fontSize: 20, color: Colors.white)),
-          )
-        ],
+          child: Row(
+            children: [
+              const CircleAvatar(
+                child: Image(
+                  image: AssetImage('assets/images/logo.png'),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
+                child: const Text(
+                  'Hiện chưa có khảo sát!',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
