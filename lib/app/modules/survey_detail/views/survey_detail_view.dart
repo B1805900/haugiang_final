@@ -4,6 +4,7 @@ import '../../../common/constant.dart';
 import '../controllers/survey_detail_controller.dart';
 import '../../../data/models/survey_detail.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:flutter_marquee/flutter_marquee.dart';
 
 
 class SurveyDetailView extends GetView<SurveyDetailController> {
@@ -13,7 +14,28 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor, // Màu nền của AppBar
-        title: Obx(() => Text('Nhóm câu hỏi: ${controller.currentPage.value + 1}/${controller.maxPage.value}')),
+        title: Obx(() {
+          if (controller.groupList.isNotEmpty) {
+            final currentPage = controller.currentPage.value + 1;
+            final maxPage = controller.maxPage.value;
+            final groupName = controller.groupList[currentPage];
+            return Row(
+              children: [
+                Text("Nhóm ${currentPage}/${maxPage}: "),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 45/100,
+                  child: Marquee(
+                    str: "${groupName}",
+                    baseMilliseconds: 10000, // Điều chỉnh giá trị này để làm chậm tốc độ chạy
+                    containerWidth: MediaQuery.of(context).size.width * 45/100,
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Text('');
+          }
+        }),
       ),
       body: Container(
         color: Colors.white,
@@ -130,6 +152,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
     controller.updateCurrentPage(0,  surVeydetail.length, "");
   for (int i=0; i<surVeydetail.length; i++) {
     final SurveydetailModel survey = surVeydetail[i];
+    controller.groupList.add(survey.groupName!);
     for(int j=0; j<survey.questions!.length; j++){
       final QuestionModel question =  survey.questions![j];
       controller.listKeyofpage[ValueKey(question.idQuestion)] = i;
@@ -188,17 +211,17 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
             //   ),
             // ),
             //const SizedBox(height: 5),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: Text(
-                "${survey.groupName}",
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: secondaryColor,
-                ),
-              ),
-            ),
+            // SizedBox(
+            //   width: MediaQuery.of(context).size.width * 0.9,
+            //   child: Text(
+            //     "${survey.groupName}",
+            //     style: const TextStyle(
+            //       fontSize: 20,
+            //       fontWeight: FontWeight.bold,
+            //       color: secondaryColor,
+            //     ),
+            //   ),
+            // ),
             // Container(
             //   height: 2,
             //   color: Colors.blue,
@@ -435,5 +458,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
     return const Text('No data available');
     }
   }
+
+
 }
 

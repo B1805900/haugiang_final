@@ -18,6 +18,7 @@ class SurveyDetailController extends GetxController {
     var currentPage = 0.obs;
     var maxPage = 0.obs;
     var groupName = "".obs;
+    RxList<String> groupList = <String>[].obs;
 
   void updateCurrentPage(int page, int numberpage, String name) {
     currentPage.value = page;
