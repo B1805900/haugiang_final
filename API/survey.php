@@ -25,7 +25,7 @@ if ($conn === false) {
 }
 
 // Thực hiện một truy vấn
-$sql = "SELECT * FROM survey";
+$sql = "SELECT * FROM survey WHERE status = 1";
 $query = sqlsrv_query($conn, $sql);
 
 if ($query === false) {

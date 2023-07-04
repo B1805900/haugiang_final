@@ -27,7 +27,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                   child: Marquee(
                     str: "${groupName}",
                     baseMilliseconds: 10000, // Điều chỉnh giá trị này để làm chậm tốc độ chạy
-                    containerWidth: MediaQuery.of(context).size.width * 45/100,
+                    containerWidth: MediaQuery.of(context).size.width * 42/100,
                   ),
                 ),
               ],
