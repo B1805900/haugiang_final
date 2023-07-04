@@ -10,6 +10,7 @@ abstract class Routes {
   static const SURVEY_DETAIL = _Paths.SURVEY_DETAIL;
   static const SURVEY_DETAIL_PAGE = _Paths.SURVEY_DETAIL_PAGE;
   static const TESTQR = _Paths.TESTQR;
+  static const APPINFO = _Paths.APPINFO;
 }
 
 abstract class _Paths {
@@ -21,4 +22,5 @@ abstract class _Paths {
   static const SURVEY_DETAIL = '/survey-detail';
   static const SURVEY_DETAIL_PAGE = '/survey-detail-page';
   static const TESTQR = '/testqr';
+  static const APPINFO = '/appinfo';
 }

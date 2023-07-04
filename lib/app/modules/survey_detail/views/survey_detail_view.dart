@@ -18,14 +18,14 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
           if (controller.groupList.isNotEmpty) {
             final currentPage = controller.currentPage.value + 1;
             final maxPage = controller.maxPage.value;
-            final groupName = controller.groupList[currentPage];
+            final groupName = controller.groupList[controller.currentPage.value];
             return Row(
               children: [
                 Text("Nhóm ${currentPage}/${maxPage}: "),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 45/100,
                   child: Marquee(
-                    str: "${groupName}",
+                    str: groupName,
                     baseMilliseconds: 10000, // Điều chỉnh giá trị này để làm chậm tốc độ chạy
                     containerWidth: MediaQuery.of(context).size.width * 42/100,
                   ),
@@ -147,6 +147,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
   controller.resultList.clear();
   controller.listKeyofpage.clear();
   controller.sttPadding.clear();
+  controller.groupList.clear();
   final List<SurveydetailModel>? surVeydetail = await controller.fetchData();
   if (surVeydetail != null) {
     controller.updateCurrentPage(0,  surVeydetail.length, "");
@@ -288,7 +289,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                                     const Icon(Icons.question_answer_rounded, color: iconColor),
                                     const SizedBox(width: 8),
                                     SizedBox(
-                                      width: Get.width * 0.7,
+                                      width: Get.width * 0.72,
                                       child: Text(
                                         "Câu hỏi ${questionIndex + 1}: ${question.question}",
                                         maxLines: 10,
@@ -297,7 +298,7 @@ class SurveyDetailView extends GetView<SurveyDetailController> {
                                           fontSize: 18,
                                           color: texColor,
                                           fontWeight: FontWeight.bold,
-                                          height: 1.3,
+                                          height: 1.2,
                                         ),
                                       ),
                                     ),

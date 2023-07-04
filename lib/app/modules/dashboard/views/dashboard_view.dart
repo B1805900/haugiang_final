@@ -147,6 +147,13 @@ class DashboardView extends GetView<DashboardController> {
             child: ListView(
               children: <Widget>[
                 buildMenuItem(
+                    text: 'Thông tin ứng dụng',
+                    icon: Icons.info,
+                    iconColor: Colors.black,
+                    onPressed: () {
+                      Get.toNamed(Routes.APPINFO);
+                    }),    
+                buildMenuItem(
                     text: 'Thoát',
                     icon: Icons.logout,
                     iconColor: Colors.black,

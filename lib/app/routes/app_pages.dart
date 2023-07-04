@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/appinfo/bindings/appinfo_binding.dart';
+import '../modules/appinfo/views/appinfo_view.dart';
 import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -50,6 +52,11 @@ class AppPages {
       name: _Paths.TESTQR,
       page: () => const TestqrView(),
       binding: TestqrBinding(),
+    ),
+    GetPage(
+      name: _Paths.APPINFO,
+      page: () => const AppinfoView(),
+      binding: AppinfoBinding(),
     ),
   ];
 }
