@@ -147,4 +147,32 @@ class SinginController extends GetxController {
           backgroundColor: Colors.yellow);
     }
   }
+
+  Future<List<String>> getUsedservice () async {
+    List<String> listService = [];
+    try {
+      var url = Uri.parse('http://139.180.145.98:8080/listService.php');
+      var response = await http.get(url);
+      if (response.statusCode == 200) {
+        var jsonString = response.body;
+        var jsonDataList = jsonString.split('}{');
+        jsonDataList = jsonDataList.map((jsonString) {
+          if (!jsonString.startsWith('{')) jsonString = '{' + jsonString;
+          if (!jsonString.endsWith('}')) jsonString += '}';
+          return jsonString;
+        }).toList();
+        var properties = <Map<String, dynamic>>[];
+        for (var jsonData in jsonDataList) {
+          var property = json.decode(jsonData);
+          properties.add(property);
+          listService.add((property['name_service']));
+        }
+      } else {
+        listService.add("");
+      }
+    } catch (e) {
+      listService.add("");
+    }
+    return listService;
+  }
 }

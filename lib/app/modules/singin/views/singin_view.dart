@@ -6,7 +6,6 @@ import '../controllers/singin_controller.dart';
 import '../../../common/widgets/custom_textformfield.dart';
 import '../../../common/constant.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 
 
@@ -94,7 +93,8 @@ class SinginView extends GetView<SinginController> {
                       hintText: 'Số CCCD...', icon: Icons.recent_actors),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return null;
+                       return "Số CCCD không được rỗng";
+                      //return null;
                     } else if (value.replaceAll(' ', '').length != 12 && value.replaceAll(' ', '').length != 9 || !GetUtils.isNum(value)) {
                       return 'Số CMND/CCCD chưa hợp lệ (phải có 9 hoặc 12 số)';
                     }
@@ -114,8 +114,8 @@ class SinginView extends GetView<SinginController> {
                       hintText: 'Số điện thoại...', icon: Icons.phone_android),
                   validator: (value) {
                     if (value!.isEmpty) {
-                    //  return "Số điện thoại không được rỗng";
-                      return null;
+                        return "Số điện thoại không được rỗng";
+                    //  return null;
                     } else if (!GetUtils.isNum(value.replaceAll(' ', ''))) {
                       return "Vui lòng nhập số điện thoại hợp lệ";
                     }
@@ -311,7 +311,8 @@ class SinginView extends GetView<SinginController> {
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeOut,
                     );
-                    return controller.options;
+                    List<String> options = await controller.getUsedservice();
+                    return options;
                   },
                   itemBuilder: (context, suggestion) {
                     return ListTile(
@@ -323,7 +324,7 @@ class SinginView extends GetView<SinginController> {
                   },
                   suggestionsBoxDecoration: const SuggestionsBoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    constraints: BoxConstraints(maxHeight: 150), // Giới hạn chiều cao của phần chứa tùy chọn
+                    constraints: BoxConstraints(maxHeight: 160), // Giới hạn chiều cao của phần chứa tùy chọn
                   ),
                   suggestionsBoxVerticalOffset: -190,
                   animationDuration: Duration.zero, // Hiển thị gợi ý ngay lập tức
