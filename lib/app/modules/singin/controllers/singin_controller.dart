@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../common/constant.dart';
 import '../../../data/models/users.dart';
 import '../../../routes/app_pages.dart';
@@ -29,7 +28,7 @@ class SinginController extends GetxController {
       barrierDismissible: false,
     );
   }
-
+  final ScrollController scrollController = ScrollController();
   //TODO: Implement SinginController
   final formKey = GlobalKey<FormState>();
   final TextEditingController fullnameController = TextEditingController();
@@ -45,14 +44,24 @@ class SinginController extends GetxController {
   final TextEditingController numfemaleController = TextEditingController();
   final TextEditingController jobController = TextEditingController();
   final TextEditingController incomeController = TextEditingController();
-  RxBool showSuggestions = false.obs;
-  OverlayEntry? overlayEntry;
-  final LayerLink layerLink = LayerLink();
-  final TextEditingController suggestionController = TextEditingController();
-  final FocusNode textFieldFocus = FocusNode();
-
+  
   final List<String> genderOptions = ["Nam", "Nữ", "Khác"];
   final RxString selectedGender = "Nam".obs;
+
+  List<int> numSelected = [0, ...List.generate(100, (index) => index + 1)];
+  RxInt selectedAge = 18.obs;
+  RxInt selectedNumpeople = 0.obs;
+  RxInt selectedNumfemale = 0.obs;
+
+  final TextEditingController textEditingController = TextEditingController();
+  final TextEditingController typeAheadController = TextEditingController();
+  final List<String> options = [
+    'Option 1',
+    'Option 2',
+    'Option 3',
+    'Option 4',
+    'Option 5',
+  ];
 
   UsersModel userInfo = UsersModel();
 

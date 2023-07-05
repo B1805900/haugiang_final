@@ -5,6 +5,11 @@ import '../../../routes/app_pages.dart';
 import '../controllers/singin_controller.dart';
 import '../../../common/widgets/custom_textformfield.dart';
 import '../../../common/constant.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+
+
+
 class SinginView extends GetView<SinginController> {
   const SinginView({Key? key}) : super(key: key);
   @override
@@ -48,6 +53,7 @@ class SinginView extends GetView<SinginController> {
     return Form(
       key: controller.formKey,
       child: SingleChildScrollView(
+        controller: controller.scrollController,
         child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -243,35 +249,95 @@ class SinginView extends GetView<SinginController> {
                   },
                 ),
                 const SizedBox(height: 10),
-                TextFormField(
-                  style: const TextStyle(
-                      color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
+                // TextFormField(
+                //   style: const TextStyle(
+                //       color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
+                //     ),
+                //   keyboardType: TextInputType.text,
+                //   decoration: buildDecorationTextFormField(
+                //   hintText: 'Dịch vụ công từng sử dụng...', icon: Icons.accessibility_sharp),
+                //   validator: (value) {
+                //     if (value!.isEmpty) {
+                //       return null;
+                //     } else if (value.replaceAll(' ', '').length <= 1) {
+                //       return "Vui lòng nhập dịch vụ hợp lệ";
+                //     }
+                //     return null;
+                //   },
+                //   onSaved: (value) {
+                //     controller.userInfo.usedservice = value;
+                //   },
+                // ),
+                // const SizedBox(height: 10),
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       child: TextField(
+                //         controller: controller.textEditingController,
+                //         decoration: const InputDecoration(
+                //           labelText: 'Dịch vụ công',
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(width: 10),
+                //     DropdownButton<String>(
+                //       value: controller.selectedOption.value,
+                //       onChanged: (String? newValue) {
+                //         if (newValue != null) {
+                //           controller.selectedOption.value = newValue;
+                //           controller.textEditingController.text = newValue;
+                //         }
+                //       },
+                //       items: controller.options.map((String option) {
+                //         return DropdownMenuItem<String>(
+                //           value: option,
+                //           child: Text(option),
+                //         );
+                //       }).toList(),
+                //     ),
+                //   ],
+                // ),
+                // const SizedBox(height: 15),
+                TypeAheadField<String>(
+                  textFieldConfiguration: TextFieldConfiguration(
+                    decoration: const InputDecoration(
+                      labelText: 'Dịch vụ công từng sử dụng: ',
                     ),
-                  keyboardType: TextInputType.text,
-                  decoration: buildDecorationTextFormField(
-                  hintText: 'Dịch vụ công từng sử dụng...', icon: Icons.accessibility_sharp),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return null;
-                    } else if (value.replaceAll(' ', '').length <= 1) {
-                      return "Vui lòng nhập dịch vụ hợp lệ";
-                    }
-                    return null;
+                    controller: controller.typeAheadController,
+                  ),
+                  suggestionsCallback: (pattern) async {
+                    controller.scrollController.animateTo(
+                    controller.scrollController.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                    );
+                    return controller.options;
                   },
-                  onSaved: (value) {
-                    controller.userInfo.usedservice = value;
+                  itemBuilder: (context, suggestion) {
+                    return ListTile(
+                      title: Text(suggestion),
+                    );
                   },
+                  onSuggestionSelected: (suggestion) {
+                    controller.typeAheadController.text = suggestion;
+                  },
+                  suggestionsBoxDecoration: const SuggestionsBoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    constraints: BoxConstraints(maxHeight: 150), // Giới hạn chiều cao của phần chứa tùy chọn
+                  ),
+                  suggestionsBoxVerticalOffset: -190,
+                  animationDuration: Duration.zero, // Hiển thị gợi ý ngay lập tức
                 ),
                 const SizedBox(height: 15),
                 Row(
                   children: [
                     const Text('Giới tính:',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                color: texColor,
-                              )),
-                    const SizedBox(width: 26),
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: texColor,
+                      )),
+                    const SizedBox(width: 20),
                     Obx(
                       () => DropdownButton<String>(
                         value: controller.selectedGender.value,
@@ -293,7 +359,8 @@ class SinginView extends GetView<SinginController> {
                       },
                       ),
                     ),
-                    const SizedBox(width: 26),
+                    //const SizedBox(width: 26),
+                    const Spacer(),
                     const Text('Tuổi:',
                               style: TextStyle(
                                 fontSize: 17,
@@ -301,28 +368,46 @@ class SinginView extends GetView<SinginController> {
                                 color: texColor,
                               )),
                     const SizedBox(width: 10),
-                    Flexible(
-                      child: TextFormField(
-                        textAlign: TextAlign.center, // Căn giữa nội dung ngay khi nhập liệu
-                        keyboardType: TextInputType.number,
-                        controller: controller.ageController,
-                        decoration: buildDecorationTextFormField2(hintText: ''),
-                        style: const TextStyle(
-                          color: texColor,
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return null;
-                          } else if (!GetUtils.isNum(value) || value.length > 3) {
-                            return "Không hợp lệ";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          controller.userInfo.age = int.tryParse(value ?? '');
-                        },
+                    Obx(
+                      () => DropdownButton<int>(
+                        value: controller.selectedAge.value,
+                        dropdownColor: Colors.white, // Đặt màu sắc cho menu dropdown
+                        items: controller.numSelected.map((int age) {
+                          return DropdownMenuItem<int>(
+                            value: age,
+                            child: Text(age.toString()),
+                          );
+                        }).toList(),
+                      onChanged: (int? newValue) {
+                        if (newValue != null && controller.numSelected.contains(newValue)) {
+                          controller.selectedAge.value = newValue;
+                          controller.userInfo.age = newValue;
+                        }
+                      },
                       ),
                     ),
+                    // Flexible(
+                    //   child: TextFormField(
+                    //     textAlign: TextAlign.center, // Căn giữa nội dung ngay khi nhập liệu
+                    //     keyboardType: TextInputType.number,
+                    //     controller: controller.ageController,
+                    //     decoration: buildDecorationTextFormField2(hintText: ''),
+                    //     style: const TextStyle(
+                    //       color: texColor,
+                    //     ),
+                    //     validator: (value) {
+                    //       if (value!.isEmpty) {
+                    //         return null;
+                    //       } else if (!GetUtils.isNum(value) || value.length > 3) {
+                    //         return "Không hợp lệ";
+                    //       }
+                    //       return null;
+                    //     },
+                    //     onSaved: (value) {
+                    //       controller.userInfo.age = int.tryParse(value ?? '');
+                    //     },
+                    //   ),
+                    // ),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -334,59 +419,96 @@ class SinginView extends GetView<SinginController> {
                         fontWeight: FontWeight.w600,
                         color: texColor,
                       )),
-                    const SizedBox(width: 5),
-                    Flexible(
-                        child: TextFormField(
-                          style: const TextStyle(
-                            color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
-                          ),
-                          textAlign: TextAlign.center, // Căn giữa nội dung ngay khi nhập liệu
-                          keyboardType: TextInputType.number,
-                          decoration: buildDecorationTextFormField2(
-                          hintText: ''),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return null;
-                            } else if (!GetUtils.isNum(value) || value.length > 4) {
-                              return "Không hợp lệ";
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            controller.userInfo.numpeople = int.tryParse(value ?? '');
-                          },
-                        ),
+                    const SizedBox(width: 10),
+                    Obx(
+                      () => DropdownButton<int>(
+                        value: controller.selectedNumpeople.value,
+                        dropdownColor: Colors.white, // Đặt màu sắc cho menu dropdown
+                        items: controller.numSelected.map((int age) {
+                          return DropdownMenuItem<int>(
+                            value: age,
+                            child: Text(age.toString()),
+                          );
+                        }).toList(),
+                      onChanged: (int? newValue) {
+                        if (newValue != null && controller.numSelected.contains(newValue)) {
+                          controller.selectedNumpeople.value = newValue;
+                          controller.userInfo.numpeople = newValue;
+                        }
+                      },
                       ),
+                    ),
+                    // Flexible(
+                    //     child: TextFormField(
+                    //       style: const TextStyle(
+                    //         color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
+                    //       ),
+                    //       textAlign: TextAlign.center, // Căn giữa nội dung ngay khi nhập liệu
+                    //       keyboardType: TextInputType.number,
+                    //       decoration: buildDecorationTextFormField2(
+                    //       hintText: ''),
+                    //       validator: (value) {
+                    //         if (value!.isEmpty) {
+                    //           return null;
+                    //         } else if (!GetUtils.isNum(value) || value.length > 4) {
+                    //           return "Không hợp lệ";
+                    //         }
+                    //         return null;
+                    //       },
+                    //       onSaved: (value) {
+                    //         controller.userInfo.numpeople = int.tryParse(value ?? '');
+                    //       },
+                    //     ),
+                    //   ),
                     const SizedBox(width: 5),
+                    const Spacer(),
                     const Text('Số nữ:',
                               style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w600,
                                 color: texColor,
                               )),
-                    const SizedBox(width: 5),
-                    Flexible(
-                        child: TextFormField(
-                          style: const TextStyle(
-                          color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
-                        ),
-                        textAlign: TextAlign.center, // Căn giữa nội dung ngay khi nhập liệu
-                        keyboardType: TextInputType.number,
-                        decoration: buildDecorationTextFormField2(
-                        hintText: ''),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return null;
-                          } else if (!GetUtils.isNum(value) || value.length > 4) {
-                            return "Không hợp lệ";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          controller.userInfo.numfemale = int.tryParse(value ?? '');
-                        },
+                    const SizedBox(width: 10),
+                    Obx(
+                      () => DropdownButton<int>(
+                        value: controller.selectedNumfemale.value,
+                        dropdownColor: Colors.white, // Đặt màu sắc cho menu dropdown
+                        items: controller.numSelected.map((int age) {
+                          return DropdownMenuItem<int>(
+                            value: age,
+                            child: Text(age.toString()),
+                          );
+                        }).toList(),
+                      onChanged: (int? newValue) {
+                        if (newValue != null && controller.numSelected.contains(newValue)) {
+                          controller.selectedNumfemale.value = newValue;
+                          controller.userInfo.numfemale = newValue;
+                        }
+                      },
                       ),
                     ),
+                    // Flexible(
+                    //     child: TextFormField(
+                    //       style: const TextStyle(
+                    //       color: texColor, // Đặt màu sắc cho chữ khi nhập liệu
+                    //     ),
+                    //     textAlign: TextAlign.center, // Căn giữa nội dung ngay khi nhập liệu
+                    //     keyboardType: TextInputType.number,
+                    //     decoration: buildDecorationTextFormField2(
+                    //     hintText: ''),
+                    //     validator: (value) {
+                    //       if (value!.isEmpty) {
+                    //         return null;
+                    //       } else if (!GetUtils.isNum(value) || value.length > 4) {
+                    //         return "Không hợp lệ";
+                    //       }
+                    //       return null;
+                    //     },
+                    //     onSaved: (value) {
+                    //       controller.userInfo.numfemale = int.tryParse(value ?? '');
+                    //     },
+                    //   ),
+                    // ),
                   ],
                 ),
                 const SizedBox(height: 10),  
@@ -401,6 +523,7 @@ class SinginView extends GetView<SinginController> {
                           if (controller.formKey.currentState!.validate()) {
                             controller.formKey.currentState!.save(); // Gọi hàm onSaved của TextFormField
                             controller.userInfo.gender = controller.selectedGender.value;
+                            controller.userInfo.usedservice = controller.typeAheadController.text;
                             controller.formKey.currentState!.reset();
                             
                             controller.fullnameController.clear();
@@ -417,6 +540,10 @@ class SinginView extends GetView<SinginController> {
                             controller.jobController.clear();
                             controller.incomeController.clear();
 
+                            controller.selectedAge.value = 18;
+                            controller.selectedNumfemale.value = 0;
+                            controller.selectedNumpeople.value = 0;
+                            controller.typeAheadController.clear();
                             controller.saveUser1(controller.userInfo);
                           }
                         },
@@ -522,7 +649,8 @@ class SinginView extends GetView<SinginController> {
             controller.cccdController.text = cccd;
             controller.selectedGender.value = gender;
             //controller.selectedGender.value = gender;
-            controller.ageController.text = "${age}";
+            controller.selectedAge.value = age;
+            controller.userInfo.age = age;
             controller.update;
             //controller.showDialogMessagenew("${age}");
 
